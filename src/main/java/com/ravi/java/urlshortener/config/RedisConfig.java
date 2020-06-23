@@ -9,7 +9,7 @@ import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ravi.java.urlshortener.model.Url;
+import com.ravi.java.urlshortener.models.Url;
 
 @Configuration
 public class RedisConfig {

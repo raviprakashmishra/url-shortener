@@ -1,4 +1,4 @@
-package com.ravi.java.urlshortener.model;
+package com.ravi.java.urlshortener.models;
 import java.time.LocalDateTime;
 
 public class Url {
