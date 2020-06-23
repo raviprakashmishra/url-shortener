@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.hash.Hashing;
+import com.ravi.java.urlshortener.models.URLError;
 import com.ravi.java.urlshortener.models.Url;
 
 @RestController
@@ -56,10 +57,10 @@ public class UrlShortenerController {
     );
 
     // if invalid url, return error
-   /* if (!validator.isValid(url.getUrl())) {
-      Error error = new Error("url", url.getUrl(), "Invalid URL");
+   if (!validator.isValid(url.getUrl())) {
+      URLError error = new URLError("url", url.getUrl().toString(), "Invalid URL");
       return ResponseEntity.badRequest().body(error);
-    }*/
+    }
 
     String id = Hashing.murmur3_32().hashString(url.getUrl(), Charset.defaultCharset()).toString();
     url.setId(id);

@@ -1,15 +1,15 @@
 package com.ravi.java.urlshortener.models;
 
-public class Error {
+public class URLError {
 
 	  private String field;
 	  private String value;
 	  private String message;
 
-	  public Error() {
+	  public URLError() {
 	  }
 
-	  public Error(String field, String value, String message) {
+	  public URLError(String field, String value, String message) {
 	    this.field = field;
 	    this.value = value;
 	    this.message = message;
