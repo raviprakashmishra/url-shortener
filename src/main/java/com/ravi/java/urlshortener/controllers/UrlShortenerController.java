@@ -55,24 +55,20 @@ public class UrlShortenerController {
    */
   @RequestMapping(method = RequestMethod.POST)
   @ResponseBody
-  public String postUrl(@RequestBody Url url) {
+  public Url postUrl(@RequestBody Url url) {
 
     UrlValidator validator = new UrlValidator(
         new String[]{"http", "https"}
     );
 
-   /* // if invalid url, return error
-    if (!validator.isValid(url.getUrl())) {
-      //return ResponseEntity.badRequest().body("Invalid url "+url.getUrl());
-    }*/
 
     String id = Hashing.murmur3_32().hashString(url.getUrl(), Charset.defaultCharset()).toString();
- 
+    url.setUrl(id);
 
     //store in redis
     strRedisTemplate.opsForValue().set(id, url.getUrl());
 
-    return id;
+    return url;
   }
 
 }
