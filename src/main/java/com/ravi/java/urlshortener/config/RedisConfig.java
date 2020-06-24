@@ -1,5 +1,7 @@
 package com.ravi.java.urlshortener.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ravi.java.urlshortener.models.Url;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,26 +10,24 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ravi.java.urlshortener.models.Url;
-
 @Configuration
 public class RedisConfig {
 
-	@Autowired
-	ObjectMapper mapper;
 
-	@Autowired
-	RedisConnectionFactory connectionFactory;
+  @Autowired
+  ObjectMapper mapper;
 
-	@Bean
-	RedisTemplate<String, Url> redisTemplate() {
-		final RedisTemplate<String, Url> redisTemplate = new RedisTemplate<>();
-		Jackson2JsonRedisSerializer<Url> valueSerializer = new Jackson2JsonRedisSerializer<>(Url.class);
-		valueSerializer.setObjectMapper(mapper);
-		redisTemplate.setConnectionFactory(connectionFactory);
-		redisTemplate.setKeySerializer(new StringRedisSerializer());
-		redisTemplate.setValueSerializer(valueSerializer);
-		return redisTemplate;
-	}
+  @Autowired
+  RedisConnectionFactory connectionFactory;
+
+  @Bean
+  RedisTemplate<String, Url> redisTemplate() {
+    final RedisTemplate<String, Url> redisTemplate = new RedisTemplate<>();
+    Jackson2JsonRedisSerializer valueSerializer = new Jackson2JsonRedisSerializer(Url.class);
+    valueSerializer.setObjectMapper(mapper);
+    redisTemplate.setConnectionFactory(connectionFactory);
+    redisTemplate.setKeySerializer(new StringRedisSerializer());
+    redisTemplate.setValueSerializer(valueSerializer);
+    return redisTemplate;
+  }
 }

@@ -1,42 +1,50 @@
 package com.ravi.java.urlshortener.models;
+
 import java.time.LocalDateTime;
+
 
 public class Url {
 
-  private String id;
-  private String url;
-  private LocalDateTime created;
+	private String url;
 
-  public Url() {
-  }
+	public Url() {
+	}
 
-  public Url(String id, String url, LocalDateTime created) {
-    this.id = id;
-    this.url = url;
-    this.created = created;
-  }
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((url == null) ? 0 : url.hashCode());
+		return result;
+	}
 
-  public String getId() {
-    return id;
-  }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Url other = (Url) obj;
+		if (url == null) {
+			if (other.url != null)
+				return false;
+		} else if (!url.equals(other.url))
+			return false;
+		return true;
+	}
 
-  public void setId(String id) {
-    this.id = id;
-  }
+	public Url(String url) {
+		super();
+		this.url = url;
+	}
 
-  public String getUrl() {
-    return url;
-  }
+	public String getUrl() {
+		return url;
+	}
 
-  public void setUrl(String url) {
-    this.url = url;
-  }
-
-  public LocalDateTime getCreated() {
-    return created;
-  }
-
-  public void setCreated(LocalDateTime created) {
-    this.created = created;
-  }
+	public void setUrl(String url) {
+		this.url = url;
+	}
 }

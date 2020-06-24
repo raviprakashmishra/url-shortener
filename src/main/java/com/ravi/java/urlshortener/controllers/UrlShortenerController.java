@@ -1,15 +1,12 @@
 package com.ravi.java.urlshortener.controllers;
 
 import java.nio.charset.Charset;
-import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Nonnull;
 
 import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.common.hash.Hashing;
-import com.ravi.java.urlshortener.models.URLError;
+import com.ravi.java.urlshortener.models.Error;
 import com.ravi.java.urlshortener.models.Url;
 
 @RestController
@@ -28,6 +25,9 @@ public class UrlShortenerController {
 
   @Autowired
   private RedisTemplate<String, Url> redisTemplate;
+  
+  @Autowired
+  private RedisTemplate<String, String> strRedisTemplate;
 
   @Value("${redis.ttl}")
   private long ttl;
@@ -40,7 +40,12 @@ public class UrlShortenerController {
   public ResponseEntity getUrl(@PathVariable String id) {
 
     // get from redis
-    Url url = redisTemplate.opsForValue().get(id);
+    String url = strRedisTemplate.opsForValue().get(id);
+
+    if (url == null) {
+      Error error = new Error("id", id, "No such key exists");
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
 
     return ResponseEntity.ok(url);
   }
@@ -50,26 +55,24 @@ public class UrlShortenerController {
    */
   @RequestMapping(method = RequestMethod.POST)
   @ResponseBody
-  public ResponseEntity postUrl(@RequestBody @Nonnull Url url) {
+  public String postUrl(@RequestBody Url url) {
 
     UrlValidator validator = new UrlValidator(
         new String[]{"http", "https"}
     );
 
-    // if invalid url, return error
-   if (!validator.isValid(url.getUrl())) {
-      URLError error = new URLError("url", url.getUrl().toString(), "Invalid URL");
-      return ResponseEntity.badRequest().body(error);
-    }
+   /* // if invalid url, return error
+    if (!validator.isValid(url.getUrl())) {
+      //return ResponseEntity.badRequest().body("Invalid url "+url.getUrl());
+    }*/
 
     String id = Hashing.murmur3_32().hashString(url.getUrl(), Charset.defaultCharset()).toString();
-    url.setId(id);
-    url.setCreated(LocalDateTime.now());
+ 
 
     //store in redis
-    redisTemplate.opsForValue().set(url.getId(), url, ttl, TimeUnit.SECONDS);
+    strRedisTemplate.opsForValue().set(id, url.getUrl());
 
-    return ResponseEntity.ok(url);
+    return id;
   }
 
 }
